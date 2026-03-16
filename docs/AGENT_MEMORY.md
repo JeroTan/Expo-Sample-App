@@ -35,8 +35,31 @@ This file serves as a persistent memory for any AI agents working on this projec
   - Local: `npx expo prebuild --clean --platform android` → `cd android && .\gradlew.bat assembleDebug`
   - gradlew included in prebuild; no Scoop install needed
   - Output: `android/app/build/outputs/apk/debug/app-debug.apk`
+- **[2026-03-16]**: Prebuild & APK build session:
+  - Ran `npx expo prebuild --clean` successfully (generates Android only on Windows; iOS requires macOS/Xcode)
+  - Android package name: `com.anonymous.monsterhunterview`
+  - Java/JDK requirement: Gradle needs JDK to compile. Installed via `scoop bucket add java && scoop install openjdk`
+  - APK build started: `.\gradlew.bat assembleDebug` (compiles RN + native code into debug APK)
+  - Build issue: Java 25 (OpenJDK) incompatible with Gradle 8.14.3 (error: "Unsupported class file major version 69")
+  - Solution: Installed Java 21 LTS via `scoop install temurin21-jdk` (compatible with Gradle 8.14.3)
+  - JAVA_HOME setup: Temporary (session-only) via `$env:JAVA_HOME = "C:\Users\JeroweTan\scoop\apps\temurin21-jdk\current"`
+  - Permanent JAVA_HOME: Use `[Environment]::SetEnvironmentVariable()` in PowerShell or Windows Environment Variables GUI
+- **[2026-03-16] (Session 2)**: Android SDK and APK build troubleshooting:
+  - First gradle run failed: `ANDROID_HOME` not set; no Android SDK installed
+  - Attempted: `scoop install android-sdk` → failed (not in Scoop extras bucket)
+  - Pivoted to: `scoop install android-studio` → installed successfully (1.3 GB)
+  - Android Studio installed but SDK not auto-configured; tried `scoop install android-clt` (command-line tools)
+  - `android-clt` installed; contains `sdkmanager` for installing SDK components
+  - Gradle build issue: SDK licenses not accepted; ran `sdkmanager --licenses` with `y` inputs to accept all
+  - Next build attempt: `ANDROID_HOME=C:\Users\JeroweTan\scoop\apps\android-clt\current`
+  - New error: "Could not find target with hash string 'android-36'" — SDK Platform 36 not fully installed in correct location
+  - Build interrupted during SDK platform installation; requires restart
+  - **Current State**: Java 21 ✓, Android SDK tools ✓, but platform libraries incomplete. Build stopped mid-configuration phase.
+  - **Next Step Tomorrow**: Retry `.\gradlew.bat assembleDebug` from scratch with full Android SDK setup. May need to manually download/install platform libs or use EAS Build (Expo cloud service) instead for faster iteration.
+
 - **Key Decisions**:
   - NativeWind for styling (Tailwind CSS for React Native)
   - TanStack Query for API caching and data management
   - Bulletproof React folder structure for scalability
-  - Local APK build for testing (no EAS login required)
+  - Local APK build for testing (no EAS login required) — exploring; SDK setup complex on Windows
+  - Alternative: Use Expo Go (`npm start` + scan QR) for rapid dev iteration without APK builds
