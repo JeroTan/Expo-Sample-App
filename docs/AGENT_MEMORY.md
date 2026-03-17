@@ -57,6 +57,15 @@ This file serves as a persistent memory for any AI agents working on this projec
   - **Current State**: Java 21 ✓, Android SDK tools ✓, but platform libraries incomplete. Build stopped mid-configuration phase.
   - **Next Step Tomorrow**: Retry `.\gradlew.bat assembleDebug` from scratch with full Android SDK setup. May need to manually download/install platform libs or use EAS Build (Expo cloud service) instead for faster iteration.
 
+- **[2026-03-17]**: Automation and Build Tools:
+  - Created `build-android.bat` in the project root to automate setting `JAVA_HOME`, `ANDROID_HOME`, and running the Gradle build.
+  - Verified environment paths for Temurin 21 and `android-clt` SDK.
+  - **BUILD SUCCESS**: First APK built successfully (166.45 MB debug APK). Took 1h 7m (includes all dependency downloads + Kotlin compilation).
+  - Root cause of slow build: First build downloads ~500MB of dependencies and compiles 100+ Java/Kotlin files. Subsequent builds cached.
+  - Optimization: Updated `.bat` to use `--parallel` and `--build-cache` flags for 5-10 min future builds.
+  - APK location: `android/app/build/outputs/apk/debug/app-debug.apk`
+  - Note: Gradle is CPU-bound (not GPU), so CUDA won't help. SSD speed is the bottleneck.
+
 - **Key Decisions**:
   - NativeWind for styling (Tailwind CSS for React Native)
   - TanStack Query for API caching and data management
