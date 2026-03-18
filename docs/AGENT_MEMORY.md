@@ -65,6 +65,8 @@ This file serves as a persistent memory for any AI agents working on this projec
   - Optimization: Updated `.bat` to use `--parallel` and `--build-cache` flags for 5-10 min future builds.
   - APK location: `android/app/build/outputs/apk/debug/app-debug.apk`
   - Note: Gradle is CPU-bound (not GPU), so CUDA won't help. SSD speed is the bottleneck.
+  - Created `build-android-release.bat` for optimized release builds (~90-110 MB, smaller than debug).
+  - Release APK uses `assembleRelease` instead of `assembleDebug` and includes auto-signing.
 
 - **Key Decisions**:
   - NativeWind for styling (Tailwind CSS for React Native)
