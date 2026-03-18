@@ -74,3 +74,14 @@ This file serves as a persistent memory for any AI agents working on this projec
   - Bulletproof React folder structure for scalability
   - Local APK build for testing (no EAS login required) — exploring; SDK setup complex on Windows
   - Alternative: Use Expo Go (`npm start` + scan QR) for rapid dev iteration without APK builds
+
+- **[2026-03-18]**: EAS build troubleshooting and success
+  - Ran `npx eas build --platform android`, initially got `Cannot get Expo config` fingerprint errors; resolved by regenerating native `android/` via `npx expo prebuild --clean` and ensuring `package-lock.json`/`eas.json` were committed.
+  - Adjusted `eas.json` to build an **APK** in `preview` config by setting `android.buildType = "apk"`.
+  - Successfully completed EAS build and obtained download link for `.aab` artifact (used for testing/Play Store).
+
+- **[2026-03-18]**: Cookie/auth explanation session
+  - Explained that React Native `fetch()` does not auto-store cookies; cookies exist only in the HTTP response headers unless explicitly saved.
+  - Recommended `@react-native-cookies/cookies` (or token/JWT auth) for persisting auth cookies in RN.
+  - Clarified that cookie storage is domain-scoped, so `CookieManager.get(domain)` reads from native cookie jar (iOS `NSHTTPCookieStorage`, Android cookie store).
+  - Confirmed that without cookie manager, cookies are effectively “lost” after fetch.
